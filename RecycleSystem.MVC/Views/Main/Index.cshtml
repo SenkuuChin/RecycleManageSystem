@@ -1,0 +1,363 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>垃圾回收管理系统</title>
+    <script src="~/lib/layui/layui.js"></script>
+    <link href="~/lib/layui/css/layui.css" rel="stylesheet" />
+    <link href="~/css/admin.css" rel="stylesheet" />
+    <script src="~/js/MyHome.js"></script>
+</head>
+<body>
+
+    <!--主布局容器-->
+    <div id="cntr_Container">
+        <div class="layui-layout-admin">
+
+            <!--头部-->
+            <div class="layui-header">
+
+                <!--菜单伸缩/页面刷新-->
+                <div class="layui-layout-left">
+                    <ul class="layui-nav">
+                        <li class="layui-nav-item" lay-unselect>
+                            <a href="javascript:;" click-event="flexible">
+                                <i class="layui-icon layui-icon-shrink-right" id="icon_Flexible"></i>
+                            </a>
+                        </li>
+                        <li class="layui-nav-item" lay-unselect>
+                            <a href="javascript:;" click-event="refresh">
+                                <i class="layui-icon layui-icon-refresh-3"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!--全屏展示/用户登录信息-->
+                <div class="layui-layout-right">
+                    <ul class="layui-nav">
+                        <li class="layui-nav-item">
+                            <a href="javascript:;">
+                                @*<a href="javascript:;" click-event="fullScreen">*@
+                                <i class="layui-icon layui-icon-screen-full"></i>
+                            </a>
+                        </li>
+
+                        <li class="layui-nav-item">
+                            <a href="javascript:;">
+                                <img src="~/Content/image/headimg.jpg" onclick="changeImage()" class="layui-nav-img" />
+                                @ViewBag.name
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd>
+                                    <a href="javascript:;" lay-href="/Account/Profile">基本资料</a>
+                                </dd>
+                                <dd>
+                                    <a href="javascript:;" onclick="update()">修改密码</a>
+                                </dd>
+
+                                <dd>
+                                    <a href="/Account/Logout">退了</a>
+                                </dd>
+                            </dl>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <div class="layui-logo">
+
+                        <img src="~/Content/image/LDGlogo3.png" />
+                        <p style="font-weight:bold">垃圾回收管理系统</p>
+                    </div>
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all">
+                        <li class="layui-nav-item  layui-nav-itemed">
+                            <a href="javascript:;">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>系统管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd>
+                                    <a lay-href="/UserManage/Index">用户管理</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/DepartmentManage/Index">部门管理</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/RoleManage/Index">角色管理</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/LogManage/Index">登录日志</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/LogManage/OperateLog">操作日志</a>
+                                </dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item  layui-nav-itemed">
+                            <a href="javascript:;">
+                                <i class="layui-icon layui-icon-diamond"></i>
+                                <cite>订单管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd>
+                                    <a lay-href="/OrderManage/Index">未受理订单</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/OrderManage/Runing">进行中订单</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/OrderManage/Finished">已完成的订单</a>
+                                </dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item  layui-nav-itemed">
+                            <a href="javascript:;">
+                                <i class="layui-icon layui-icon-diamond"></i>
+                                <cite>订单管理（仅为测试用，需要搬到前端）</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd>
+                                    <a lay-href="/OrderManage/MyRuning">我的订单</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/OrderManage/WaittingConfirm">待审核订单</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/OrderManage/MyFinishedOrder">已完成的订单</a>
+                                </dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item  layui-nav-itemed">
+                            <a href="javascript:;">
+                                <i class="layui-icon layui-icon-diamond"></i>
+                                <cite>仓库管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd>
+                                    <a lay-href="/WareHouse/Index">废品入库</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/WareHouse/ViewAll">查看仓库物品</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/WareHouse/DeviceInput">设备入库</a>
+                                </dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item  layui-nav-itemed">
+                            <a href="javascript:;">
+                                <i class="layui-icon layui-icon-diamond"></i>
+                                <cite>订单管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd>
+                                    <a lay-href="/OrderManage/ViewReleasedOrders">查看订单</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/OrderManage/SpecialRequest">特殊撤销</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/OrderManage/ViewAllOrders">所有订单</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/OrderManage/VerifyOrders">订单完成审核</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/OrderManage/ApprovalSpecialOrderWithdrew">订单特殊撤销审核</a>
+                                </dd>
+                            </dl>
+                        </li>
+                        <li class="layui-nav-item  layui-nav-itemed">
+                            <a href="javascript:;">
+                                <i class="layui-icon layui-icon-diamond"></i>
+                                <cite>财务模块</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd>
+                                    <a lay-href="/FinancialManage/Bills">查看账单记录</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/CategoryManage/Index">类别管理</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="/FinancialManage/VerifyOrders">数据统计图</a>
+                                </dd>
+                            </dl>
+                        </li>
+                        @*<ul class="layui-nav layui-nav-tree" lay-shrink="all">
+        @foreach (var i in ViewBag.MenuList)
+        {
+            if (i.ParentId == "0")
+            {
+
+                <li class="layui-nav-item  layui-nav-itemed">
+                    <a href="javascript:;">
+                        <i class="@i.MenuIconUrl"></i>
+                        <cite>@i.Name</cite>
+                    </a>
+                    <dl class="layui-nav-child">
+                        @foreach (var j in ViewBag.MenuList)
+                        {
+                            if (j.ParentId == i.PowerId)
+                            {
+                                <dd>
+                                    <a lay-href="@j.ActionUrl">@j.Name</a>
+                                </dd>
+                            }
+                        }
+                    </dl>
+                </li>
+            }
+        }*@
+
+                        @*<li class="layui-nav-item  layui-nav-itemed">
+            <a href="javascript:;">
+                <i class="layui-icon layui-icon-diamond"></i>
+                <cite>物资领用管理</cite>
+            </a>
+            <dl class="layui-nav-child">
+                <dd>
+                    <a lay-href="/Goods_Consumable/Index">耗材领用</a>
+                </dd>
+                <dd>
+                    <a lay-href="/Goods_Equipment/Index">非耗材借用</a>
+                </dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item  layui-nav-itemed">
+            <a href="javascript:;">
+                <i class="layui-icon layui-icon-diamond"></i>
+                <cite>物资审核管理</cite>
+            </a>
+            <dl class="layui-nav-child">
+                <dd>
+                    <a lay-href="/Goods_Consumable/ReviewIndex">耗材审核</a>
+                </dd>
+                <dd>
+                    <a lay-href="/Goods_Equipment/ReviewIndex">非耗材审核</a>
+                </dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item  layui-nav-itemed">
+            <a href="javascript:;">
+                <i class="layui-icon layui-icon-diamond"></i>
+                <cite>耗材资源管理</cite>
+            </a>
+            <dl class="layui-nav-child">
+                <dd>
+                    <a lay-href="/Goods_Consumable/OutputIndex">耗材出库</a>
+                </dd>
+                <dd>
+                    <a lay-href="/Goods_Consumable/InputIndex">耗材入库</a>
+                </dd>
+                <dd>
+                    <a lay-href="/Goods_Equipment/OutputIndex">非耗材出库</a>
+                </dd>
+                <dd>
+                    <a lay-href="/Goods_Equipment/InputIndex">非耗材入库</a>
+                </dd>
+                <dd>
+                    <a lay-href="/Goods_Equipment/ReturnIndex">非耗材归还</a>
+                </dd>
+                <dd>
+                    <a lay-href="/Statistics/Index">数据分析统计</a>
+                </dd>
+            </dl>
+        </li>*@
+
+
+                    </ul>
+
+                </div>
+            </div>
+
+
+
+
+            <!--页面标签区-->
+            <div class="layadmin-pagetabs">
+
+                <!--右侧下拉菜单（关闭当前/关闭其他/关闭全部）-->
+                <div class="layadmin-tabs-control layui-icon layui-icon-down">
+                    <ul class="layui-nav layadmin-tabs-select">
+                        <li class="layui-nav-item" lay-unselect>
+                            <a href="javascript:;">
+                                <dl class="layui-nav-child layui-anim-fadein">
+                                    <dd>
+                                        <a href="javascript:;" click-event="closeThis">关闭当前标签页</a>
+                                    </dd>
+                                    <dd>
+                                        <a href="javascript:;" click-event="closeOther">关闭其他标签页</a>
+                                    </dd>
+                                    <dd>
+                                        <a href="javascript:;" click-event="closeAll">关闭所有标签页</a>
+                                    </dd>
+                                </dl>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!--页面标签选项卡-->
+                <div class="layui-tab" lay-allowClose="true" lay-filter="layout-tab">
+                    <ul class="layui-tab-title" id="tab_Titles">
+                        <li class="layui-this">
+                            <i class="layui-icon layui-icon-home"></i>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!--主内容区-->
+            <div class="layui-body" id="tab_Bodys">
+                <div class="layadmin-tabsbody-item layui-show">
+                    <iframe src="@Url.Action("HomeIndex")" frameborder="0" class="layadmin-iframe"></iframe>
+                </div>
+            </div>
+
+            <!--注脚区-->
+            @*<div class="layui-footer">
+                    技术支持：Senkuu
+                </div>*@
+
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        update = function () {
+            debugger;
+            layui.use('layer', function () {
+                layer.open({
+                    type: 2
+                    , offset: 'auto'
+                    , title: '修改密码'
+                    , content: '/Account/ReMyPwd'
+                    , shade: 0 //不显示遮罩
+                });
+            })
+        }
+        changeImage = function () {
+            debugger;
+            layui.use('layer', function () {
+                layer.open({
+                    type: 2
+                    , offset: 'auto'
+                    , title: '修改密码'
+                    , content: '/Account/ChangeImage'
+                    , shade: 0 //不显示遮罩
+                });
+            })
+        }
+    </script>
+</body>
+</html>

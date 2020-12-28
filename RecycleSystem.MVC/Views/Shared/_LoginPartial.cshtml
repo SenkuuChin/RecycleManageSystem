@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNetCore.Http
+
+<ul class="navbar-nav">
+    @if (base.Context.Session.GetString("UserName") != null)
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @base.Context.Session.GetString("UserName")!</a>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline" asp-controller="Account" asp-action="Logout">
+                <button type="submit" class="nav-link btn btn-link text-dark">登出</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">登录</a>
+        </li>
+    }
+</ul>

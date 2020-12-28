@@ -1,0 +1,72 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>添加角色</title>
+    <script src="~/lib/layui/layui.js"></script>
+    <link href="~/lib/layui/css/layui.css" rel="stylesheet" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</head>
+<body>
+
+    <div class="layui-col-md8">
+        <form class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色ID</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="RoleId" lay-verify="required" placeholder="请输入角色ID" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">部门名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="RoleName" lay-verify="required" placeholder="请输入角色名称" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">描述</label>
+                <div class="layui-input-block">
+                    <textarea placeholder="请输入描述内容" name="Description" class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item" style="text-align:center">
+                <button class="layui-btn" lay-submit="" lay-filter="subAdd">确认添加</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        layui.use(['form'], function () {
+            var form = layui.form;
+            form.verify({
+                maxLength: function (value) {
+                    if (value.length > 16) {
+                        return '不能超过16个字符'
+                    }
+                },
+            });
+            form.on('submit(subAdd)', function (data) {
+                $.ajax({
+                    url: "/RoleManage/AddRole",
+                    type: "post",
+                    data: {
+                        roleInput: data.field
+                    },
+                    success: function (res) {
+                        layer.alert(res);
+                    }
+                })
+                return false;
+            });
+        })
+    </script>
+</body>
+</html>

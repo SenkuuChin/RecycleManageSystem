@@ -1,0 +1,112 @@
+﻿@{
+    ViewData["Title"] = "仓库信息";
+    Layout = "~/Views/Shared/_MyLayout.cshtml";
+}
+<div class="layui-row ">
+
+    <div class="layui-col-md2 layui-col-md-offset5 " style="margin-top:20px;"><input type="text" id="txt_Query" placeholder="请输入实例ID" class="layui-input"></div>
+    <div class="layui-col-md1" style="margin-top:20px;"> <button class="layui-btn" onclick="btn_search()">搜索</button></div>
+
+</div>
+
+<table class="layui-hide" id="warehouseDataList" lay-filter="warehouseDataList"></table>
+
+
+<script>
+    var table; //放置全局中，方便后续使用
+    layui.use(['table','upload'], function () {
+        table = layui.table;
+        var upload = layui.upload;
+        table.render({
+            elem: '#warehouseDataList'
+            , url: '/WareHouse/GetWareHouseDataList'
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示'
+                , layEvent: 'LAYTABLE_TIPS'
+                , icon: 'layui-icon-tips'
+            }]
+            , parseData: function (res) {
+                return {
+                    "code": 0
+                    , "msg": "",
+                    "count": res.count
+                    , "data": res.data
+                    , "curr": res.data.length
+                }
+            }
+            , title: '用户数据表'
+            , cols: [[
+                  { type: 'checkbox', fixed: 'left' },
+                  { field: 'instanceId', title: '实例ID', width: 300, unresize: false }
+                , { field: 'name', title: '物品名', width: 200 }
+                , { field: 'categoryName', title: '类别', width: 150, sort: false }
+                , { field: 'num', title: '数量', width: 80 }
+                , { field: 'unit', title: '单位', width: 80 }
+                , { field: 'addTime', title: '入库时间', width: 200 }
+            ]]
+            , page: true
+            , limit: 10
+            , limits: [10, 20, 25, 30, 35, 40, 45, 50, 100]
+        });
+        //头工具栏事件
+        table.on('toolbar(warehouseDataList)', function (obj) {
+            debugger;
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'update':
+                    debugger;
+                    var data = checkStatus.data;
+                    if (data.length == 1) {
+                        var id = data[0].id;
+                        layui.use('layer', function () {
+                            layer.open({
+                                type: 2,
+                                title: '修改信息',
+                                shade: 0.8,
+                                maxmin: true, //开启最大化最小化按钮
+                                area: ['893px', '600px'],
+                                content: '/WareHouse/Update?Id=' + id,
+                                end: function () {
+                                    btn_search();
+                                }
+                            });
+                        })
+                    } else {
+                        return layer.alert("必须选中一条且只能选中一条！")
+                    }
+                    break;
+                //自定义头工具栏右侧图标 - 提示
+                case 'LAYTABLE_TIPS':
+                    layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                    break;
+            };
+        });
+        upload.render({ //允许上传的文件后缀
+            elem: '#input'
+            , url: '/WareHouse/MultipleImport' //改成您自己的上传接口
+            , accept: 'file' //普通文件
+            , exts: 'xls|xlsx' //只允许上传压缩文件
+            , done: function (res) {
+                layer.msg('上传成功');
+                console.log(res)
+            }
+        });
+    });
+    //查询
+    btn_search = function () {
+        debugger;
+        var selectInfo = $("#txt_Query").val();
+
+        //重新加载表格，并把文本框的内容传给后台
+        table.reload('warehouseDataList', {
+            url: '/WareHouse/GetWareHouseDataList',
+            page: {
+                curr: 1//从第一页开始（很关键）
+            },
+            where: {
+                queryInfo: selectInfo, //需传过去的值
+            }
+        });
+    };
+</script>

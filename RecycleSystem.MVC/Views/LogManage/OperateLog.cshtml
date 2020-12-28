@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "操作日志信息";
+    Layout = "~/Views/Shared/_MyLayout.cshtml";
+}
+@*<div class="layui-row ">
+
+        <div class="layui-col-md2 layui-col-md-offset5 " style="margin-top:20px;"><input type="text" id="txt_Query" placeholder="请输入实例ID" class="layui-input"></div>
+        <div class="layui-col-md1" style="margin-top:20px;"> <button class="layui-btn" onclick="btn_search()">搜索</button></div>
+
+    </div>*@
+
+<table class="layui-hide" id="operateLogDataList" lay-filter="operateLogDataList"></table>
+
+
+<script>
+    var table; //放置全局中，方便后续使用
+    layui.use('table', function () {
+        table = layui.table;
+        table.render({
+            elem: '#operateLogDataList'
+            , url: '/LogManage/GetOperateLogData'
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示'
+                , layEvent: 'LAYTABLE_TIPS'
+                , icon: 'layui-icon-tips'
+            }]
+            , parseData: function (res) {
+                return {
+                    "code": 0
+                    , "msg": "",
+                    "count": res.count
+                    , "data": res.data
+                    , "curr": res.data.length
+                }
+            }
+            , title: '用户数据表'
+            , cols: [[
+                  { type: 'checkbox', fixed: 'left' },
+                  { field: 'id', title: 'ID', width: 100, unresize: false }
+                , { field: 'operator', title: '操作人', width: 200 }
+                , { field: 'info', title: '信息', width: 500 }
+                , { field: 'addTime', title: '操作时间', width: 300 }
+            ]]
+            , page: true
+            , limit: 10
+            , limits: [10, 20, 25, 30, 35, 40, 45, 50, 100]
+        });
+    });
+</script>

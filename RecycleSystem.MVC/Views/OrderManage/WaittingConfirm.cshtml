@@ -1,0 +1,118 @@
+﻿
+@{
+    ViewData["Title"] = "订单完成审核";
+    Layout = "~/Views/Shared/_MyLayout.cshtml";
+}
+
+<div class="layui-row ">
+
+    <div class="layui-col-md2 layui-col-md-offset5 " style="margin-top:20px;"><input type="text" id="txt_Query" placeholder="请输入订单号" class="layui-input"></div>
+    <div class="layui-col-md1" style="margin-top:20px;"> <button class="layui-btn" onclick="btn_search()">搜索</button></div>
+
+</div>
+
+<table class="layui-hide" id="orderList" lay-filter="orderList"></table>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="view"><i class="layui-icon"></i>查看订单</button>
+    </div>
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+    var table; //放置全局中，方便后续使用
+    layui.use('table', function () {
+        table = layui.table;
+        var form = layui.form;
+        table.render({
+            elem: '#orderList'
+            , url: '/OrderManage/GetMyWaittingVerifyOrder'
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示'
+                , layEvent: 'LAYTABLE_TIPS'
+                , icon: 'layui-icon-tips'
+            }]
+            , parseData: function (res) {
+                return {
+                    "code": 0
+                    , "msg": "",
+                    "count": res.count
+                    , "data": res.data
+                    , "curr": res.data.length
+                }
+            }
+            , title: '用户数据表'
+            , cols: [[
+                { type: 'checkbox', fixed: 'left' }
+                , { field: 'instanceId', title: '订单编号', width: 300 }
+                , { field: 'enterpriseID', title: '订单发起者', width: 120 }
+                , { field: 'enterpriseName', title: '所属公司', width: 250 }
+                , { field: 'name', title: '物品名', width: 150, sort: false }
+                , { field: 'num', title: '数量', width: 80 }
+                , { field: 'unit', title: '单位', width: 80 }
+                , { field: 'categoryName', title: '类别', width: 180 }
+                , { field: 'originalOrder', title: '原订单号', width: 300, sort: false }
+                , { field: 'addTime', title: '添加时间', width: 200 }
+            ]]
+            , page: true
+            , limit: 10
+            , limits: [10, 20, 25, 30, 35, 40, 45, 50, 100]
+        });
+        //头工具栏事件
+        table.on('toolbar(orderList)', function (obj) {
+            debugger;
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'view':
+                    var data = checkStatus.data;
+                    if (data.length == 1) {
+                        var id = data[0].originalOrder;
+                        layui.use('layer', function () {
+                            layer.open({
+                                type: 2,
+                                title: '查看订单',
+                                shade: 0.8,
+                                maxmin: true, //开启最大化最小化按钮
+                                area: ['893px', '600px'],
+                                content: '/OrderManage/ViewMyOrder?id=' + id,
+                                end: function () {
+                                    btn_search();
+                                }
+                            });
+                        })
+                    } else {
+                        return layer.alert("必须选中一条且只能选中一条！")
+                    }
+
+                    break;
+
+                //自定义头工具栏右侧图标 - 提示
+                case 'LAYTABLE_TIPS':
+                    layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                    break;
+            };
+        });
+    });
+    //查询
+    btn_search = function () {
+        debugger;
+        var selectInfo = $("#txt_Query").val();
+
+        //重新加载表格，并把文本框的内容传给后台
+        table.reload('orderList', {
+            url: '/OrderManage/GetMyWaittingVerifyOrder',
+            page: {
+                curr: 1//从第一页开始（很关键）
+            },
+            where: {
+                queryInfo: selectInfo, //需传过去的值
+            }
+        });
+    };
+</script>

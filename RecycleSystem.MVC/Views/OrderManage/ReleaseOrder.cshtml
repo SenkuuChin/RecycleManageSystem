@@ -1,0 +1,93 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>发布需求订单</title>
+    <script src="~/lib/layui/layui.js"></script>
+    <link href="~/lib/layui/css/layui.css" rel="stylesheet" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</head>
+<body>
+
+    <div class="layui-col-md8">
+        <form class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <label class="layui-form-label">物品名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="Name" lay-verify="required" placeholder="请输入物品名" class="layui-input">
+                </div>
+                <label class="layui-form-label">类别</label>
+                <div class="layui-input-inline">
+                    <select name="CategoryId" id="Category">
+                        <option value="">---请选择---</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">数量</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="Num" lay-verify="required" placeholder="请输入数量" class="layui-input">
+                </div>
+                <label class="layui-form-label">单位</label>
+                <div class="layui-input-inline">
+                    <select name="Unit">
+                        <option value="">---请选择---</option>
+                        <option value="千克">千克</option>
+                        <option value="吨">吨</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item" style="text-align:center">
+                <button class="layui-btn" lay-submit="" lay-filter="Release">发布</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        
+        $.ajax({
+            url: "/CategoryManage/GetCategories",
+            type: "post",
+            async: false,
+            success: function (res) {
+                var str = "";
+                $.each(res, function (index, i) {
+                    str += "<option value='" + i.categoryId + "'>";
+                    str += i.categoryName;
+                    str += "</option>";
+                })
+                $("#Category").append(str);
+            }
+        })
+        layui.use(['form'], function () {
+            var form = layui.form;
+            form.verify({
+                maxLength: function (value) {
+                    if (value.length > 16) {
+                        return '不能超过16个字符'
+                    }
+                },
+            });
+            form.on('submit(Release)', function (data) {
+                $.ajax({
+                    url: "/OrderManage/ReleaseOrder",
+                    type: "post",
+                    data: {
+                        demandOrderInput: data.field
+                    },
+                    success: function (res) {
+                        layer.alert(res);
+                    }
+                })
+                return false;
+            });
+        })
+    </script>
+</body>
+</html>

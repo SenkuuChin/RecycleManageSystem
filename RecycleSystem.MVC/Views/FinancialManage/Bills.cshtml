@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "未受理的订单";
+    Layout = "~/Views/Shared/_MyLayout.cshtml";
+}
+<script src="~/lib/layui/layui_exts/excel.js"></script>
+<div class="layui-row ">
+
+    <div class="layui-col-md2 layui-col-md-offset5 " style="margin-top:20px;"><input type="text" id="txt_Query" placeholder="请输入账单号" class="layui-input"></div>
+    <div class="layui-col-md1" style="margin-top:20px;"> <button class="layui-btn" onclick="btn_search()">搜索</button></div>
+
+</div>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" onclick="btn_export()"><i class="layui-icon"></i>导出账单</button>
+    </div>
+</script>
+
+<table class="layui-hide" id="financeDataList" lay-filter="financeDataList"></table>
+
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+    var table; //放置全局中，方便后续使用
+    layui.use('table', function () {
+        table = layui.table;
+        table.render({
+            elem: '#financeDataList'
+            , url: '/FinancialManage/GetBills'
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示'
+                , layEvent: 'LAYTABLE_TIPS'
+                , icon: 'layui-icon-tips'
+            }]
+            , parseData: function (res) {
+                return {
+                    "code": 0
+                    , "msg": "",
+                    "count": res.count
+                    , "data": res.data
+                    , "curr": res.data.length
+                }
+            }
+            , title: '用户数据表'
+            , cols: [[
+                { type: 'checkbox', fixed: 'left' }
+                , { field: 'zid', title: '账单编号', width: 200, fixed: 'left', unresize: true, sort: false }
+                , { field: 'oid', title: '原订单编号', width: 200 }
+                , { field: 'name', title: '物品名', width: 120 }
+                , { field: 'num', title: '数量', width: 100 }
+                , { field: 'unit', title: '单位', width: 80 }
+                , { field: 'money', title: '金额', width: 150 }
+                , { field: 'addTime', title: '添加时间', width: 200 }
+            ]]
+            , page: true
+            , limit: 10
+            , limits: [10, 20, 25, 30, 35, 40, 45, 50, 100]
+        });
+    });
+    //查询
+    btn_search = function () {
+        debugger;
+        var selectInfo = $("#txt_Query").val();
+
+        //重新加载表格，并把文本框的内容传给后台
+        table.reload('financeDataList', {
+            url: '/FinancialManage/GetBills',
+            page: {
+                curr: 1//从第一页开始（很关键）
+            },
+            where: {
+                queryInfo: selectInfo, //需传过去的值
+            }
+        });
+    };
+    btn_export = function () {
+        layui.use(['excel', 'layer'], function () {
+            var $ = layui.$;
+            var layer = layui.layer;
+            var excel = layui.excel;
+            // 模拟从后端接口读取需要导出的数据
+            $.ajax({
+                url: '/FinancialManage/ExcelExport'
+                , dataType: 'json'
+                , success(res) {
+                    var data = res;
+                    console.log(res);
+                    // 重点！！！如果后端给的数据顺序和映射关系不对，请执行梳理函数后导出
+                    data = excel.filterExportData(data, [
+                        'id'
+                        , 'zid'
+                        , 'oid'
+                        , 'name'
+                        , 'num'
+                        , 'unit'
+                        , 'money'
+                        , 'addTime'
+
+                    ]);
+                    // 重点2！！！一般都需要加一个表头，表头的键名顺序需要与最终导出的数据一致
+                    data.unshift({ id: "编号", zid: "账单编号", oid: '来源订单', name: "名字", num: "数量", unit: '单位', money: "金额", addTime: "入账时间"});
+
+                    var timestart = Date.now();
+                    excel.exportExcel(data, '账单记录' + timestart + '.xlsx', 'xlsx');
+                    //	var timeend = Date.now();
+
+                    //	var spent = (timeend - timestart) / 1000;
+                    //	layer.alert('单纯导出耗时 '+spent+' s');
+                }
+                , error() {
+                    layer.alert('获取数据失败，请检查是否部署在本地服务器环境下');
+                }
+            });
+
+        });
+    }
+</script>

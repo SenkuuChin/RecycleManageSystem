@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+    <PackageReference Include="Wangkanai.Detection" Version="3.0.0" />
+    <PackageReference Include="Wangkanai.Detection.Browser" Version="2.0.1" />
+    <PackageReference Include="Wangkanai.Detection.Device" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RecycleSystem.Data\RecycleSystem.Data.csproj" />
+    <ProjectReference Include="..\RecycleSystem.IService\RecycleSystem.IService.csproj" />
+    <ProjectReference Include="..\RecycleSystem.Service\RecycleSystem.Service.csproj" />
+    <ProjectReference Include="..\RecycleSystem.Ulitity\RecycleSystem.Ulitity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Content\image\" />
+  </ItemGroup>
+
+</Project>

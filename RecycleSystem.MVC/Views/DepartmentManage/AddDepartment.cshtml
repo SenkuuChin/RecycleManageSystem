@@ -1,0 +1,108 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>添加部门信息</title>
+    <script src="~/lib/layui/layui.js"></script>
+    <link href="~/lib/layui/css/layui.css" rel="stylesheet" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+</head>
+<body>
+
+    <div class="layui-col-md8">
+        <form class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <label class="layui-form-label">部门ID</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="DepartmentId" lay-verify="required" placeholder="请输入部门ID" class="layui-input">
+                </div>
+                <label class="layui-form-label">部门名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="DepartmentName" lay-verify="required" placeholder="请输入角色名称" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">部门领导</label>
+                <div class="layui-input-inline ">
+                    <select name="LeaderId" id="Leader">
+                    </select>
+                </div>
+                <label class="layui-form-label">所属部门</label>
+                <div class="layui-input-inline ">
+                    <select name="ParentId" id="ParentDepartment">
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item" style="text-align:center">
+                <button class="layui-btn" lay-submit="" lay-filter="subAdd">确认添加</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        $(function () {
+            //获取用户信息并填充到领导下拉框
+            $.ajax({
+                url: "/UserManage/GetUsers",
+                type: "post",
+                async: false,
+                success: function (res) {
+                    var str = "";
+                    $.each(res, function (index, i) {
+                        str += "<option value='" + i.userId + "'>";
+                        str += i.userName;
+                        str += "</option>";
+                    })
+                    $("#Leader").append(str);
+                }
+            })
+            //获取部门信息，并填充上级部门下拉框
+            $.ajax({
+                url: "/DepartmentManage/GetDepartmentInfo",
+                type: "post",
+                async: false,
+                success: function (res) {
+                    var str = "";
+                    $.each(res, function (index, i) {
+                        str += "<option value='" + i.departmentId + "'>";
+                        str += i.departmentName;
+                        str += "</option>";
+                    })
+                    $("#ParentDepartment").append(str);
+                }
+            })
+
+        })
+        layui.use(['form'], function () {
+            var form = layui.form;
+            form.verify({
+                maxLength: function (value) {
+                    if (value.length > 16) {
+                        return '不能超过16个字符'
+                    }
+                },
+            });
+            form.on('submit(subAdd)', function (data) {
+                $.ajax({
+                    url: "/DepartmentManage/AddDepartment",
+                    type: "post",
+                    data: {
+                        departmentInput: data.field
+                    },
+                    success: function (res) {
+                        layer.alert(res);
+                    }
+                })
+                return false;
+            });
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RecycleSystem.DataEntity\RecycleSystem.DataEntity.csproj" />
+    <ProjectReference Include="..\RecycleSystem.IService\RecycleSystem.IService.csproj" />
+    <ProjectReference Include="..\RecycleSystem.Ulitity\RecycleSystem.Ulitity.csproj" />
+  </ItemGroup>
+
+</Project>
